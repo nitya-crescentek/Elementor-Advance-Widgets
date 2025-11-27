@@ -27,9 +27,9 @@ class Plugin {
      */
     public function register_widget_categories($elements_manager) {
         $elements_manager->add_category(
-            'custom-widgets',
+            'advance-widgets',
             [
-                'title' => __('Advanced Widgets', 'elementor-advance-widgets'),
+                'title' => __('Advance Widgets', 'elementor-advance-widgets'),
                 'icon' => 'fa fa-plug',
             ]
         );
@@ -37,41 +37,23 @@ class Plugin {
     
     /**
      * Register all widgets
-     * Add your widget files here
      */
     public function register_widgets($widgets_manager) {
-        
-        // Check if Elementor is active
+    
         if (!did_action('elementor/loaded')) {
             return;
         }
         
-        // List of widget files to load
-        $widgets = [
-            'example-widget-1.php',
-            'example-widget-2.php',
-            // Add more widget files here
-        ];
+        // Load base widget class FIRST
+        require_once ECW_WIDGETS_DIR . 'widget-base.php';
         
-        // Load and register each widget
-        foreach ($widgets as $widget_file) {
-            $widget_path = ECW_WIDGETS_DIR . $widget_file;
-            
-            if (file_exists($widget_path)) {
-                require_once $widget_path;
-                
-                // Convert filename to class name
-                // example-widget-1.php -> Example_Widget_1
-                $class_name = str_replace('.php', '', $widget_file);
-                $class_name = str_replace('-', '_', $class_name);
-                $class_name = ucwords($class_name, '_');
-                $full_class_name = '\\ECW\\Widgets\\' . $class_name;
-                
-                if (class_exists($full_class_name)) {
-                    $widgets_manager->register(new $full_class_name());
-                }
-            }
-        }
+        // Load widget files
+        require_once ECW_WIDGETS_DIR . 'example-widget-1.php';
+        require_once ECW_WIDGETS_DIR . 'example-widget-2.php';
+        
+        // Register widgets with their full class names
+        $widgets_manager->register(new \ECW\Widgets\Example_Widget_1());
+        $widgets_manager->register(new \ECW\Widgets\Example_Widget_2());
     }
     
     /**
