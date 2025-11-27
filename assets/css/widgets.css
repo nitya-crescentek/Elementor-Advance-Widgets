@@ -1,0 +1,25 @@
+/* Custom Widget Styles */
+.ecw-example-widget-1 {
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
+.ecw-example-widget-1 .widget-title {
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+.ecw-example-widget-2 .custom-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background: #0073aa;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.ecw-example-widget-2 .custom-button:hover {
+    background: #005177;
+}
