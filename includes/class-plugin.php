@@ -5,6 +5,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * Main Plugin Class
+ * Here we have to register widgets in 'register_widgets' function and enqueue scripts
+ */
+
 class Plugin {
     
     private static $_instance = null;
@@ -48,12 +53,12 @@ class Plugin {
         require_once ECW_WIDGETS_DIR . 'widget-base.php';
         
         // Load widget files
-        require_once ECW_WIDGETS_DIR . 'example-widget-1.php';
-        require_once ECW_WIDGETS_DIR . 'example-widget-2.php';
+        require_once ECW_WIDGETS_DIR . 'slider-1.php';
+        // require_once ECW_WIDGETS_DIR . 'example-widget-2.php';
         
         // Register widgets with their full class names
-        $widgets_manager->register(new \ECW\Widgets\Example_Widget_1());
-        $widgets_manager->register(new \ECW\Widgets\Example_Widget_2());
+        $widgets_manager->register(new \ECW\Widgets\Slider_1());
+        // $widgets_manager->register(new \ECW\Widgets\Example_Widget_2());
     }
     
     /**
@@ -74,6 +79,11 @@ class Plugin {
             ECW_VERSION,
             true
         );
+
+        wp_enqueue_style('owl-carousel', 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css', [], ECW_VERSION);
+        wp_enqueue_style('owl-theme-default', 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css', [], ECW_VERSION);
+        wp_enqueue_script('owl-carousel', 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js', array('jquery'), ECW_VERSION, true);
+        
     }
     
     /**
