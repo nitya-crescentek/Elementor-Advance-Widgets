@@ -54,10 +54,14 @@ class Plugin {
         
         // Load widget files
         require_once ECW_WIDGETS_DIR . 'slider-1.php';
+
+        require_once ECW_WIDGETS_DIR . 'slider-2.php';
         // require_once ECW_WIDGETS_DIR . 'example-widget-2.php';
         
         // Register widgets with their full class names
         $widgets_manager->register(new \ECW\Widgets\Slider_1());
+
+        $widgets_manager->register(new \ECW\Widgets\Slider_2());
         // $widgets_manager->register(new \ECW\Widgets\Example_Widget_2());
     }
     
