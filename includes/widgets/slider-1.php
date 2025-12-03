@@ -183,6 +183,57 @@ class Slider_1 extends Widget_Base {
         );
 
         $this->end_controls_section();
+
+        /*
+        |--------------------------------------------------------------------------
+        | SLIDER SETTINGS
+        |--------------------------------------------------------------------------
+        */
+        $this->start_controls_section(
+            'slider_settings_section',
+            [
+                'label' => __('Slider Settings', 'elementor-advance-widgets'),
+                'tab'   => Controls_Manager::TAB_CONTENT,
+            ]
+        );
+
+        $this->add_control(
+            'autoplay',
+            [
+                'label'        => __('Autoplay', 'elementor-advance-widgets'),
+                'type'         => Controls_Manager::SWITCHER,
+                'label_on'     => __('Yes', 'elementor-advance-widgets'),
+                'label_off'    => __('No', 'elementor-advance-widgets'),
+                'return_value' => 'yes',
+                'default'      => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'autoplay_timeout',
+            [
+                'label'     => __('Autoplay Timeout (ms)', 'elementor-advance-widgets'),
+                'type'      => Controls_Manager::NUMBER,
+                'default'   => 5000,
+                'condition' => [
+                    'autoplay' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'loop',
+            [
+                'label'        => __('Loop', 'elementor-advance-widgets'),
+                'type'         => Controls_Manager::SWITCHER,
+                'label_on'     => __('Yes', 'elementor-advance-widgets'),
+                'label_off'    => __('No', 'elementor-advance-widgets'),
+                'return_value' => 'yes',
+                'default'      => 'yes',
+            ]
+        );
+
+        $this->end_controls_section();
     }
 
     /*
@@ -195,12 +246,15 @@ class Slider_1 extends Widget_Base {
 
         if (empty($s['slides'])) return;
 
+        // Generate unique ID for this widget instance
+        $widget_id = $this->get_id();
+
         ?>
 
-        <div class="slider-container">
+        <div class="slider-container slider-container-<?php echo esc_attr($widget_id); ?>">
 
             <div class="image-wrapper">
-                <img id="slider-image"
+                <img id="slider-image-<?php echo esc_attr($widget_id); ?>"
                      src="<?php echo esc_url($s['slides'][0]['slide_image']['url']); ?>"
                      alt=""
                 >
@@ -213,11 +267,11 @@ class Slider_1 extends Widget_Base {
                 </div>
 
                 <div class="slider-wrapper">
-                    <div class="fraction" id="fraction-number">
+                    <div class="fraction" id="fraction-number-<?php echo esc_attr($widget_id); ?>">
                         01 / <?php echo count($s['slides']); ?>
                     </div>
 
-                    <div class="text-slider owl-carousel owl-theme">
+                    <div class="text-slider text-slider-<?php echo esc_attr($widget_id); ?> owl-carousel owl-theme">
 
                         <?php foreach ($s['slides'] as $index => $slide): ?>
                             <?php
@@ -230,7 +284,7 @@ class Slider_1 extends Widget_Base {
 
                             <div class="item"
                                  data-image="<?php echo esc_url($slide['slide_image']['url']); ?>"
-                                 data-index="<?php printf('%02d', $index + 1); ?> / <?php echo count($s['slides']); ?>"
+                                 data-index="<?php printf('%2d', $index + 1); ?> / <?php echo count($s['slides']); ?>"
                                  data-width="<?php echo $slide['image_width']['size'] . $slide['image_width']['unit']; ?>"
                                  data-max-width="<?php echo $slide['image_max_width']['size'] . $slide['image_max_width']['unit']; ?>"
                                  data-height="<?php echo $slide['image_height']['size'] . $slide['image_height']['unit']; ?>"
@@ -247,6 +301,71 @@ class Slider_1 extends Widget_Base {
 
             </div>
         </div>
+
+        <script>
+        jQuery(document).ready(function ($) {
+            var widgetId = '<?php echo esc_js($widget_id); ?>';
+            var owl = $('.text-slider-' + widgetId);
+
+            // Prevent double initialization
+            if (owl.hasClass('owl-loaded')) {
+                owl.trigger('destroy.owl.carousel');
+                owl.removeClass('owl-loaded owl-drag');
+            }
+
+            // Initialize Owl Carousel
+            owl.owlCarousel({
+                items: 1,
+                loop: <?php echo $s['loop'] === 'yes' ? 'true' : 'false'; ?>,
+                margin: 10,
+                nav: false,
+                dots: false,
+                autoplay: <?php echo $s['autoplay'] === 'yes' ? 'true' : 'false'; ?>,
+                autoplayTimeout: <?php echo intval($s['autoplay_timeout']); ?>,
+                autoplayHoverPause: true,
+                animateOut: 'fadeOut',
+                animateIn: 'fadeInUp'
+            });
+
+            // Handle slide change event
+            owl.on('changed.owl.carousel', function (event) {
+                var currentItem = $(event.target).find('.owl-item').eq(event.item.index).find('.item');
+
+                var newImage = currentItem.data('image');
+                var newWidth = currentItem.data('width');
+                var newMaxWidth = currentItem.data('max-width');
+                var newHeight = currentItem.data('height');
+                var newRadius = currentItem.data('radius');
+                var newIndex = currentItem.data('index');
+
+                // Update fraction counter
+                $('#fraction-number-' + widgetId).text(newIndex);
+
+                // Update image with fade effect
+                $('#slider-image-' + widgetId).fadeOut(300, function () {
+                    $(this).attr('src', newImage)
+                        .css({
+                            'width': newWidth,
+                            'max-width': newMaxWidth,
+                            'height': newHeight,
+                            'border-radius': newRadius
+                        })
+                        .fadeIn(300);
+                });
+            });
+
+            // Set initial image styles
+            var firstItem = owl.find('.owl-item').first().find('.item');
+            if (firstItem.length) {
+                $('#slider-image-' + widgetId).css({
+                    'width': firstItem.data('width'),
+                    'max-width': firstItem.data('max-width'),
+                    'height': firstItem.data('height'),
+                    'border-radius': firstItem.data('radius')
+                });
+            }
+        });
+        </script>
 
         <?php
     }

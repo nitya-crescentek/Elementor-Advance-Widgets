@@ -50,30 +50,3 @@ function ecw_init() {
     \ECW\Plugin::instance();
 }
 add_action('plugins_loaded', 'ecw_init');
-
-
-
-//Any donation link and made with love text
-// class ECW_main{
-//     public function __construct()
-//     {
-//         add_filter( 'plugin_row_meta', array( $this, 'addon_plugin_links' ), 10, 2 );
-//     }
-
-//     public function addon_plugin_links( $links, $file ) {
-//         if ( $file !== plugin_basename( ECW_PLUGIN_FILE ) ) {
-//             return $links;
-//         }
-
-//         $links[] = '<a href="https://buymeacoffee.com/nityasaha" style="font-weight:bold;color:#00d300;font-size:15px;">'
-//                     . __('Donate', 'elementor-advance-widgets') .
-//                 '</a>';
-
-//         $links[] = __('Made with ❤️', 'elementor-advance-widgets');
-
-//         return $links;
-//     }
-
-// }
-
-// new ECW_main();
